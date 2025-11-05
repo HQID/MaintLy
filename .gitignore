@@ -1,0 +1,54 @@
+# OS/Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Env & secrets (commit hanya *.env.example)
+.env
+*.env
+*.env.*
+!.env.example
+
+# Logs / cache
+logs/
+*.log
+coverage/
+.nyc_output/
+.cache/
+.tmp/
+
+# TypeScript / build
+*.tsbuildinfo
+dist/
+build/
+out/
+
+# Node modules (semua paket)
+node_modules/
+
+# Frontend (Vite/Next)
+frontend/dist/
+frontend/.vite/
+frontend/.next/
+frontend/out/
+
+# Service API (Node/Hapi)
+service/api/dist/
+
+# Service ML (Python/FastAPI)
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+service/ml/data/*
+!service/ml/data/.gitkeep
+service/ml/models/*
+!service/ml/models/.gitkeep
+
+# DB dumps (biarkan schema/migrasi tetap di-track)
+db/dumps/
+db/backups/
+*.sql.gz
+*.dump
