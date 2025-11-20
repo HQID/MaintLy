@@ -11,9 +11,15 @@
   "license": "ISC",
   "dependencies": {
     "@hapi/hapi": "^21.4.4",
+    "@langchain/google-genai": "^0.1.6",
     "dotenv": "^17.2.3",
     "joi": "^18.0.1",
+    "langchain": "^0.2.12",
     "node-pg-migrate": "^8.0.3",
-    "pg": "^8.16.3"
+    "pg": "^8.16.3",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
   }
 }
