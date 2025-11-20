@@ -9,7 +9,7 @@ class MachinesService {
 
   async getAllMachines() {
     const result = await this._pool.query(
-      `SELECT id, product_id, type, location, last_reading_at, current_risk_level,
+      `SELECT id, product_id, type, last_reading_at, current_risk_level,
               current_risk_score, predicted_failure_type
        FROM machines
        ORDER BY product_id ASC`,
@@ -20,7 +20,7 @@ class MachinesService {
 
   async getMachineByProductId(productId) {
     const result = await this._pool.query(
-      `SELECT id, product_id, type, location, last_reading_at, current_risk_level,
+      `SELECT id, product_id, type, last_reading_at, current_risk_level,
               current_risk_score, predicted_failure_type
        FROM machines
        WHERE product_id = $1

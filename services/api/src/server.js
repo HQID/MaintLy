@@ -4,6 +4,7 @@ const ClientError = require('./exceptions/ClientError');
 const healthPlugin = require('./api/health');
 const machinesPlugin = require('./api/machines');
 const ticketsPlugin = require('./api/tickets');
+const agentPlugin = require('./api/agent');
 const MachinesService = require('./services/MachinesService');
 const TicketsService = require('./services/TicketsService');
 const TicketsValidator = require('./validator/tickets');
@@ -32,6 +33,7 @@ const init = async () => {
         validator: TicketsValidator,
       },
     },
+    { plugin: agentPlugin },
   ]);
 
   server.ext('onPreResponse', (request, h) => {

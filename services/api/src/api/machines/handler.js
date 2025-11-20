@@ -108,7 +108,6 @@ class MachinesHandler {
     const base = {
       product_id: machine.product_id,
       type: machine.type,
-      location: machine.location,
       current_risk_level: machine.current_risk_level,
       current_risk_score: machine.current_risk_score,
       predicted_failure_type: machine.predicted_failure_type,

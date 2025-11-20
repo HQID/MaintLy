@@ -1,9 +1,9 @@
 const { Pool } = require('pg');
 
-const connectionString = process.env.POSTGRES_URL;
+const connectionString = process.env.POSTGRES_URL || process.env.PG_URL;
 
 if (!connectionString) {
-  throw new Error('POSTGRES_URL is required to start the API service');
+  throw new Error('POSTGRES_URL atau PG_URL wajib diatur untuk menjalankan API');
 }
 
 const pool = new Pool({

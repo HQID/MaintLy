@@ -7,7 +7,6 @@ CREATE TABLE IF NOT EXISTS machines (
   id                     VARCHAR(50) PRIMARY KEY,
   product_id             TEXT NOT NULL UNIQUE,
   type                   TEXT,
-  location               TEXT,
   last_reading_at        TIMESTAMPTZ,
   current_risk_level     TEXT CHECK (current_risk_level IN ('low','medium','high')),
   current_risk_score     DOUBLE PRECISION,
@@ -88,7 +87,6 @@ CREATE TABLE IF NOT EXISTS recommendations (
   reason        TEXT,
   horizon_days  INTEGER,
   source        TEXT NOT NULL CHECK (source IN ('agent','model','manual')),
-  ticket_id     VARCHAR(50) REFERENCES tickets(id) ON DELETE SET NULL
 );
 CREATE INDEX IF NOT EXISTS idx_reco_machine_ts
   ON recommendations (machine_id, created_at DESC);
