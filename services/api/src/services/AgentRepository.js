@@ -75,7 +75,8 @@ class AgentRepository {
         [failureType, machineId],
       );
 
-      const latestTs = predictionUpdate.rows[0]?.ts || null;
+      const predictionRow = predictionUpdate.rows[0];
+      const latestTs = predictionRow && predictionRow.ts ? predictionRow.ts : null;
 
       if (latestTs) {
         await client.query(
@@ -100,6 +101,44 @@ class AgentRepository {
     } finally {
       client.release();
     }
+  }
+
+  async getTopRiskyMachines({ from, to, limit = 5 } = {}) {
+    const safeLimit = Math.min(Math.max(parseInt(limit, 10) || 5, 1), 20);
+    const { startIso, endIso } = this._normalizeDateRange(from, to);
+
+    const query = {
+      text: `
+        WITH ranked AS (
+          SELECT DISTINCT ON (m.id)
+                 m.id,
+                 m.product_id,
+                 m.type,
+                 p.risk_score,
+                 p.risk_level,
+                 p.ts AS last_ts
+          FROM predictions p
+          JOIN machines m ON m.id = p.machine_id
+          WHERE p.ts BETWEEN $1 AND $2
+          ORDER BY m.id, p.risk_score DESC NULLS LAST, p.ts DESC
+        )
+        SELECT *
+        FROM ranked
+        ORDER BY risk_score DESC NULLS LAST
+        LIMIT $3
+      `,
+      values: [startIso, endIso, safeLimit],
+    };
+
+    const result = await this._pool.query(query);
+    return result.rows.map((row) => ({
+      machine_id: row.id,
+      product_id: row.product_id,
+      type: row.type,
+      risk_score: row.risk_score !== null ? Number(row.risk_score) : null,
+      risk_level: row.risk_level,
+      last_prediction_at: row.last_ts instanceof Date ? row.last_ts.toISOString() : row.last_ts,
+    }));
   }
 
   async _getMachineByProductId(productId) {
@@ -189,6 +228,34 @@ class AgentRepository {
 
     const result = await this._pool.query(query);
     return result.rows;
+  }
+
+  _normalizeDateRange(from, to) {
+    const endDate = to ? new Date(to) : new Date();
+    if (Number.isNaN(endDate.getTime())) {
+      throw new Error('Parameter tanggal akhir tidak valid');
+    }
+
+    let startDate;
+    if (from) {
+      startDate = new Date(from);
+      if (Number.isNaN(startDate.getTime())) {
+        throw new Error('Parameter tanggal awal tidak valid');
+      }
+    } else {
+      startDate = new Date(endDate.getTime() - (7 * 24 * 60 * 60 * 1000));
+    }
+
+    if (startDate > endDate) {
+      const swap = startDate;
+      startDate = endDate;
+      endDate = swap;
+    }
+
+    return {
+      startIso: startDate.toISOString(),
+      endIso: endDate.toISOString(),
+    };
   }
 }
 
